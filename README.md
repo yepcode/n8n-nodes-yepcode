@@ -1,6 +1,6 @@
 # n8n-nodes-yepcode
 
-![n8n.io - Workflow Automation](https://yepcode.io/wp-content/uploads/2021/04/YepCode_logo_light.svg)
+![n8n.io - Workflow Automation](https://links.yepcode.io/qwX9S)
 
 This is an n8n community node. It lets you use [YepCode](https://yepcode.io/) in your n8n workflows.
 
