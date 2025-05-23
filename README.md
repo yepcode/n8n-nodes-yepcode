@@ -1,18 +1,20 @@
+![YepCode Image](https://cdn.prod.website-files.com/632cd328ed2b485519c3f689/68303b945a8746ed63f24a99_yepcode-cover-dev-tool-ai-solutions.png)
+
 # n8n-nodes-yepcode
 
-![n8n.io - Workflow Automation](https://links.yepcode.io/qwX9S)
+This is an n8n community node. It lets you use [YepCode](https://yepcode.io) in your n8n workflows.
 
-This is an n8n community node. It lets you use [YepCode](https://yepcode.io/) in your n8n workflows.
-
-[YepCode](https://yepcode.io/) is an automation platform that connects your services and APIs together with code. It empowers busy development teams to build complex integrations where NoCode tools may not fit: open data streams, huge amounts of information, complex implementation logics, and so on.
+[YepCode](https://yepcode.io) is _one or two sentences describing the service this node integrates with_.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-[Installation](#installation)
-[Operations](#operations)
-[Credentials](#credentials)
-[Resources](#resources)
-
+[Installation](#installation)  
+[Operations](#operations)  
+[Credentials](#credentials)  <!-- delete if no auth needed -->  
+[Compatibility](#compatibility)  
+[Usage](#usage)  <!-- delete if not using this section -->  
+[Resources](#resources)  
+[Version history](#version-history)  <!-- delete if not using this section -->  
 
 ## Installation
 
@@ -20,18 +22,29 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-1. Invoke a YepCode process.
+_List the operations supported by your node._
 
 ## Credentials
 
-First you need a [YepCode](https://yepcode.io/) account. It's free!
+_If users need to authenticate with the app/service, provide details here. You should include prerequisites (such as signing up with the service), available authentication methods, and how to set them up._
 
-Create a new credential:
-1. Enter your YepCode email in the ***Email*** field in the 'YepCode' credentials in n8n.
-1. Enter your YepCode password in the ***Password*** field in the 'YepCode' credentials in n8n.
-1. Click on the ***Save*** button to save the credentials.
+## Compatibility
+
+_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
+
+## Usage
+
+_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
+
+_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
 
 ## Resources
 
-- [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
-- [YepCode official docs](https://docs.yepcode.io/)
+* [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
+* _Link to app/service documentation._
+
+## Version history
+
+_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
+
+
