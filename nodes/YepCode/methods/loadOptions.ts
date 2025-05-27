@@ -1,10 +1,11 @@
 import { ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
 import { YepCodeApi } from '@yepcode/run';
+import { getYepCodeApiOptions } from '../../../credentials/YepCodeApi.credentials';
 
 export async function getProcesses(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const returnData: INodePropertyOptions[] = [];
-	const yepCodeApiCredentials = await this.getCredentials('yepCodeApi');
-	const api = new YepCodeApi({ apiToken: yepCodeApiCredentials.token.toString() });
+	const apiOptions = await getYepCodeApiOptions.call(this);
+	const api = new YepCodeApi(apiOptions);
 	const processes = await api.getProcesses();
 	for (const process of processes.data || []) {
 		returnData.push({
@@ -30,8 +31,8 @@ export async function getProcessVersionAliases(
 		return returnData;
 	}
 
-	const yepCodeApiCredentials = await this.getCredentials('yepCodeApi');
-	const api = new YepCodeApi({ apiToken: yepCodeApiCredentials.token.toString() });
+	const apiOptions = await getYepCodeApiOptions.call(this);
+	const api = new YepCodeApi(apiOptions);
 
 	const versions = await api.getProcessVersions(processId);
 	for (const version of versions.data || []) {
