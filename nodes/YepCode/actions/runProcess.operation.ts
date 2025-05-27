@@ -5,6 +5,7 @@ import {
 	type IExecuteFunctions,
 	updateDisplayOptions,
 } from 'n8n-workflow';
+import { getYepCodeApiOptions } from '../../../credentials/YepCodeApi.credentials';
 
 const properties: INodeProperties[] = [
 	{
@@ -108,8 +109,8 @@ export async function execute(
 
 	for (let i = 0; i < items.length; i++) {
 		try {
-			const yepCodeApiCredentials = await this.getCredentials('yepCodeApi');
-			const api = new YepCodeApi({ apiToken: yepCodeApiCredentials.token.toString() });
+			const apiOptions = await getYepCodeApiOptions.call(this);
+			const api = new YepCodeApi(apiOptions);
 
 			const processId = this.getNodeParameter('process', i) as string;
 			const rawPayload = this.getNodeParameter('payload', i) || {};
