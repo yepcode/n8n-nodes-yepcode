@@ -59,5 +59,8 @@
 	},
 	"peerDependencies": {
 		"n8n-workflow": "*"
+	},
+	"dependencies": {
+		"@yepcode/run": "^1.2.2"
 	}
 }
