@@ -4,6 +4,7 @@ import {
 	type INodeProperties,
 	type IExecuteFunctions,
 	updateDisplayOptions,
+	IDataObject,
 } from 'n8n-workflow';
 import { getYepCodeApiOptions } from '../../../credentials/YepCodeApi.credentials';
 
@@ -23,12 +24,24 @@ const properties: INodeProperties[] = [
 			'The YepCode process to run. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
-		displayName: 'Payload',
-		name: 'payload',
-		type: 'json',
-		default: '{}',
-		description:
-			'JSON object to provide as input for the YepCode process execution. This data will be available to the process during its run.',
+		displayName: 'Parameters',
+		name: 'parameters',
+		type: 'resourceMapper',
+		default: {
+			mappingMode: 'defineBelow',
+			value: null,
+		},
+		typeOptions: {
+			loadOptionsDependsOn: ['process'],
+			resourceMapper: {
+				valuesLabel: 'Parameters',
+				resourceMapperMethod: 'getProcessFormSchema',
+				mode: 'map',
+				supportAutoMap: false,
+				showTypeConversionOptions: false,
+			},
+		},
+		description: 'Map input data to the process form',
 	},
 	{
 		displayName: 'Show Advanced Options',
@@ -52,7 +65,8 @@ const properties: INodeProperties[] = [
 		},
 		// eslint-disable-next-line n8n-nodes-base/node-param-default-wrong-for-options
 		default: '$CURRENT',
-		description: 'Specify a version tag to run a particular published version of the process. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description:
+			'Specify a version tag to run a particular published version of the process. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Synchronous',
@@ -113,13 +127,16 @@ export async function execute(
 			const api = new YepCodeApi(apiOptions);
 
 			const processId = this.getNodeParameter('process', i) as string;
-			const rawPayload = this.getNodeParameter('payload', i) || {};
-			const payload = typeof rawPayload === 'string' ? JSON.parse(rawPayload) : rawPayload;
+
+			const parameters = this.getNodeParameter('parameters.value', i, []) as IDataObject[];
+			const payload = { ...parameters };
 
 			const showAdvanced = this.getNodeParameter('showAdvanced', i) as boolean;
 			const version = showAdvanced ? (this.getNodeParameter('version', i) as string) : '$CURRENT';
 			const versionOrAlias = version === '$CURRENT' ? '' : version;
-			const synchronous = this.getNodeParameter('synchronous', i) as boolean;
+			const synchronous = showAdvanced
+				? (this.getNodeParameter('synchronous', i) as boolean)
+				: true;
 			const comment = showAdvanced ? (this.getNodeParameter('comment', i) as string) : '';
 			const initiatedBy = showAdvanced ? (this.getNodeParameter('initiatedBy', i) as string) : '';
 

@@ -5,7 +5,7 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { NodeConnectionType, NodeOperationError } from 'n8n-workflow';
-import { loadOptions } from './methods';
+import { loadOptions, resourceMapping } from './methods';
 import * as runProcess from './actions/runProcess.operation';
 import * as runCode from './actions/runCode.operation';
 
@@ -59,9 +59,7 @@ export class YepCode implements INodeType {
 		],
 	};
 
-	methods = {
-		loadOptions,
-	};
+	methods = { loadOptions, resourceMapping };
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
