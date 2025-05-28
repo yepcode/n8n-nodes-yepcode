@@ -16,9 +16,11 @@ export class YepCodeApi implements ICredentialType {
 	documentationUrl = 'https://yepcode.io/docs';
 	properties: INodeProperties[] = [
 		{
-			displayName: 'Token',
-			name: 'token',
+			displayName: 'API Token',
+			name: 'apiToken',
 			type: 'string',
+			description:
+				"Find your API Token in the YepCode dashboard under the 'Settings -> API Credentials' section.",
 			default: '',
 			typeOptions: {
 				password: true,
@@ -30,14 +32,14 @@ export class YepCodeApi implements ICredentialType {
 			type: 'string',
 			default: DEFAULT_API_HOST,
 			description:
-				'The YepCode API host to use. This is useful if you are using a self-hosted YepCode instance.',
+				"The YepCode API host to use (default: https://cloud.yepcode.io). It can be customized for YepCode On-Premise instances.",
 		},
 	];
 	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
 		properties: {
 			headers: {
-				'x-api-token': '={{$credentials.token}}',
+				'x-api-token': '={{$credentials.apiToken}}',
 			},
 		},
 	};
@@ -54,7 +56,7 @@ export async function getYepCodeApiOptions(
 ): Promise<YepCodeApiConfig> {
 	const yepCodeApiCredentials = await this.getCredentials('yepCodeApi');
 	return {
-		apiToken: yepCodeApiCredentials.token.toString(),
+		apiToken: yepCodeApiCredentials.apiToken.toString(),
 		apiHost: yepCodeApiCredentials.apiHost
 			? yepCodeApiCredentials.apiHost.toString()
 			: DEFAULT_API_HOST,
