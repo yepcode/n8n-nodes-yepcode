@@ -6,7 +6,7 @@ export async function getProcesses(this: ILoadOptionsFunctions): Promise<INodePr
 	const returnData: INodePropertyOptions[] = [];
 	const apiOptions = await getYepCodeApiOptions.call(this);
 	const api = new YepCodeApi(apiOptions);
-	const processes = await api.getProcesses();
+	const processes = await api.getProcesses({ limit: 200 });
 	for (const process of processes.data || []) {
 		returnData.push({
 			name: process.name,
