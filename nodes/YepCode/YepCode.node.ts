@@ -71,7 +71,7 @@ export class YepCode implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				switch (operation) {
-					case 'invoke':
+					case 'run_process':
 						returnData = await runProcess.execute.call(this, items);
 						break;
 					case 'run_code':

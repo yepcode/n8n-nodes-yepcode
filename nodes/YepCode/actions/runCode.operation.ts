@@ -33,6 +33,7 @@ const properties: INodeProperties[] = [
 		displayName: 'Language',
 		name: 'language',
 		type: 'options',
+		description: "The source's code language. Optional as we'll try to detect it automatically.",
 		options: [
 			{
 				name: 'JavaScript',
