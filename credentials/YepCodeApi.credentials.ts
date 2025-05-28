@@ -1,5 +1,7 @@
 import { YepCodeApiConfig } from '@yepcode/run';
 import {
+	IAuthenticateGeneric,
+	ICredentialTestRequest,
 	ICredentialType,
 	IExecuteFunctions,
 	ILoadOptionsFunctions,
@@ -31,6 +33,20 @@ export class YepCodeApi implements ICredentialType {
 				'The YepCode API host to use. This is useful if you are using a self-hosted YepCode instance.',
 		},
 	];
+	authenticate: IAuthenticateGeneric = {
+		type: 'generic',
+		properties: {
+			headers: {
+				'x-api-token': '={{$credentials.token}}',
+			},
+		},
+	};
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: '={{$credentials?.apiHost}}',
+			url: '/run/whoami',
+		},
+	};
 }
 
 export async function getYepCodeApiOptions(
