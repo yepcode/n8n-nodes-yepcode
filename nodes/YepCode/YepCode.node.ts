@@ -66,29 +66,18 @@ export class YepCode implements INodeType {
 		let returnData: INodeExecutionData[] = [];
 		const operation = this.getNodeParameter('operation', 0);
 
-		for (let i = 0; i < items.length; i++) {
-			try {
-				switch (operation) {
-					case 'run_process':
-						returnData = await runProcess.execute.call(this, items);
-						break;
-					case 'run_code':
-						returnData = await runCode.execute.call(this, items);
-						break;
-				}
-			} catch (error) {
-				if (this.continueOnFail()) {
-					items.push({ json: this.getInputData(i)[0].json, error, pairedItem: i });
-				} else {
-					if (error.context) {
-						error.context.itemIndex = i;
-						throw error;
-					}
-					throw new NodeOperationError(this.getNode(), error, {
-						itemIndex: i,
-					});
-				}
-			}
+		switch (operation) {
+			case 'run_process':
+				returnData = await runProcess.execute.call(this, items);
+				break;
+			case 'run_code':
+				returnData = await runCode.execute.call(this, items);
+				break;
+			default:
+				throw new NodeOperationError(
+					this.getNode(),
+					`The operation "${operation}" is not supported!`,
+				);
 		}
 
 		return [returnData];
