@@ -40,12 +40,12 @@ export async function getProcessFormSchema(
 	if (!processId) {
 		return { fields: [] };
 	}
-	const process = await apiRequest.call(this, {
+	const ycProcess = await apiRequest.call(this, {
 		method: 'GET',
 		endpoint: `processes/${processId}`,
 	});
 
-	const properties = process.parametersSchema?.properties ?? {};
+	const properties = ycProcess.parametersSchema?.properties ?? {};
 	if (!properties || Object.keys(properties).length === 0) {
 		return { fields: [] };
 	}

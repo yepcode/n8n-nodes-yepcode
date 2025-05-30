@@ -7,10 +7,10 @@ export async function getProcesses(this: ILoadOptionsFunctions): Promise<INodePr
 		endpoint: 'processes',
 		query: { limit: 200 },
 	});
-	for (const process of processes.data || []) {
+	for (const ycProcess of processes.data || []) {
 		returnData.push({
-			name: process.name,
-			value: process.id,
+			name: ycProcess.name,
+			value: ycProcess.id,
 		});
 	}
 	return returnData;
