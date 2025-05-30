@@ -1,11 +1,12 @@
-import { RunOpts, YepCodeRun } from '@yepcode/run';
 import {
 	type INodeExecutionData,
 	type INodeProperties,
 	type IExecuteFunctions,
 	updateDisplayOptions,
+	IHttpRequestOptions,
+	IDataObject,
 } from 'n8n-workflow';
-import { getYepCodeApiOptions } from '../../../credentials/YepCodeApi.credentials';
+import { getYepCodeCredentials } from '../transport';
 
 const properties: INodeProperties[] = [
 	{
@@ -105,10 +106,7 @@ export async function execute(
 
 	for (let i = 0; i < items.length; i++) {
 		try {
-			const apiOptions = await getYepCodeApiOptions.call(this);
-			const yepCodeRun = new YepCodeRun(apiOptions);
-
-			const options: RunOpts = {
+			const options: IDataObject = {
 				removeOnDone: true,
 			};
 
@@ -121,8 +119,22 @@ export async function execute(
 			}
 
 			const code = this.getNodeParameter('code', i) as string;
-			const execution = await yepCodeRun.run(code, options);
-			await execution.waitForDone();
+			const { apiToken, apiHost } = await getYepCodeCredentials.call(this);
+			const requestOptions: IHttpRequestOptions = {
+				method: 'POST',
+				url: `${apiHost}/run`,
+				body: {
+					code,
+					options,
+				},
+				headers: {
+					'Content-Type': 'application/json',
+					accept: 'application/json',
+					'x-api-token': apiToken,
+				},
+			};
+
+			const execution =  await this.helpers.httpRequest(requestOptions);
 			const { id, logs, processId, status, returnValue, error, timeline, parameters, comment } =
 				execution;
 			returnData.push({

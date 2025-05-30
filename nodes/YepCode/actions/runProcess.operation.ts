@@ -1,4 +1,3 @@
-import { YepCodeApi } from '@yepcode/run';
 import {
 	type INodeExecutionData,
 	type INodeProperties,
@@ -6,7 +5,7 @@ import {
 	updateDisplayOptions,
 	IDataObject,
 } from 'n8n-workflow';
-import { getYepCodeApiOptions } from '../../../credentials/YepCodeApi.credentials';
+import { apiRequest } from '../transport';
 
 const properties: INodeProperties[] = [
 	{
@@ -123,13 +122,9 @@ export async function execute(
 
 	for (let i = 0; i < items.length; i++) {
 		try {
-			const apiOptions = await getYepCodeApiOptions.call(this);
-			const api = new YepCodeApi(apiOptions);
-
 			const processId = this.getNodeParameter('process', i) as string;
 
 			const parameters = this.getNodeParameter('parameters.value', i, []) as IDataObject[];
-			const payload = { ...parameters };
 
 			const showAdvanced = this.getNodeParameter('showAdvanced', i) as boolean;
 			const version = showAdvanced ? (this.getNodeParameter('version', i) as string) : '$CURRENT';
@@ -139,19 +134,32 @@ export async function execute(
 				: true;
 			const comment = showAdvanced ? (this.getNodeParameter('comment', i) as string) : '';
 			const initiatedBy = showAdvanced ? (this.getNodeParameter('initiatedBy', i) as string) : '';
-
+			const headers: IDataObject = {};
+			if (initiatedBy) {
+				headers['Yep-Initiated-By'] = initiatedBy;
+			}
 			let result;
 			if (!synchronous) {
-				result = await api.executeProcessAsync(processId, payload, {
-					tag: versionOrAlias,
-					comment,
-					initiatedBy,
+				result = await apiRequest.call(this, {
+					method: 'POST',
+					endpoint: `processes/${processId}/execute`,
+					headers,
+					body: {
+						parameters: JSON.stringify(parameters),
+						tag: versionOrAlias,
+						comment,
+					},
 				});
 			} else {
-				result = await api.executeProcessSync(processId, payload, {
-					tag: versionOrAlias,
-					comment,
-					initiatedBy,
+				result = await apiRequest.call(this, {
+					method: 'POST',
+					endpoint: `processes/${processId}/execute-sync`,
+					headers,
+					body: {
+						parameters: JSON.stringify(parameters),
+						tag: versionOrAlias,
+						comment,
+					},
 				});
 			}
 			returnData.push({ json: result });

@@ -1,14 +1,10 @@
-import { YepCodeApiConfig } from '@yepcode/run';
 import {
 	IAuthenticateGeneric,
 	ICredentialTestRequest,
 	ICredentialType,
-	IExecuteFunctions,
-	ILoadOptionsFunctions,
 	INodeProperties,
 } from 'n8n-workflow';
-
-const DEFAULT_API_HOST = 'https://cloud.yepcode.io';
+import { DEFAULT_API_HOST } from '../nodes/YepCode/transport';
 
 export class YepCodeApi implements ICredentialType {
 	name = 'yepCodeApi';
@@ -48,17 +44,5 @@ export class YepCodeApi implements ICredentialType {
 			baseURL: '={{$credentials?.apiHost}}',
 			url: '/run/whoami',
 		},
-	};
-}
-
-export async function getYepCodeApiOptions(
-	this: ILoadOptionsFunctions | IExecuteFunctions,
-): Promise<YepCodeApiConfig> {
-	const yepCodeApiCredentials = await this.getCredentials('yepCodeApi');
-	return {
-		apiToken: yepCodeApiCredentials.apiToken.toString(),
-		apiHost: yepCodeApiCredentials.apiHost
-			? yepCodeApiCredentials.apiHost.toString()
-			: DEFAULT_API_HOST,
 	};
 }
