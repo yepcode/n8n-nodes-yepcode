@@ -1,12 +1,12 @@
 import { ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
-import { YepCodeApi } from '@yepcode/run';
-import { getYepCodeApiOptions } from '../../../credentials/YepCodeApi.credentials';
+import { apiRequest } from '../transport';
 
 export async function getProcesses(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const returnData: INodePropertyOptions[] = [];
-	const apiOptions = await getYepCodeApiOptions.call(this);
-	const api = new YepCodeApi(apiOptions);
-	const processes = await api.getProcesses({ limit: 200 });
+	const processes = await apiRequest.call(this, {
+		endpoint: 'processes',
+		query: { limit: 200 },
+	});
 	for (const process of processes.data || []) {
 		returnData.push({
 			name: process.name,
@@ -31,10 +31,10 @@ export async function getProcessVersionAliases(
 		return returnData;
 	}
 
-	const apiOptions = await getYepCodeApiOptions.call(this);
-	const api = new YepCodeApi(apiOptions);
-
-	const versions = await api.getProcessVersions(processId);
+	const versions = await apiRequest.call(this, {
+		endpoint: `processes/${processId}/versions`,
+		query: { limit: 200 },
+	});
 	for (const version of versions.data || []) {
 		returnData.push({
 			name: version.id,
@@ -42,7 +42,10 @@ export async function getProcessVersionAliases(
 		});
 	}
 
-	const aliases = await api.getProcessVersionAliases(processId);
+	const aliases = await apiRequest.call(this, {
+		endpoint: `processes/${processId}/aliases`,
+		query: { limit: 200 },
+	});
 	for (const alias of aliases.data || []) {
 		returnData.push({
 			name: `${alias.name} (${alias.versionId})`,

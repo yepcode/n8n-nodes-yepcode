@@ -1,11 +1,10 @@
-import { YepCodeApi } from '@yepcode/run';
 import {
 	FieldType,
 	ILoadOptionsFunctions,
 	ResourceMapperField,
 	ResourceMapperFields,
 } from 'n8n-workflow';
-import { getYepCodeApiOptions } from '../../../credentials/YepCodeApi.credentials';
+import { apiRequest } from '../transport';
 
 function mapJsonSchemaType(jsonPropertyType: string): FieldType {
 	switch (jsonPropertyType) {
@@ -41,9 +40,10 @@ export async function getProcessFormSchema(
 	if (!processId) {
 		return { fields: [] };
 	}
-	const apiOptions = await getYepCodeApiOptions.call(this);
-	const api = new YepCodeApi(apiOptions);
-	const process = await api.getProcess(processId);
+	const process = await apiRequest.call(this, {
+		method: 'GET',
+		endpoint: `processes/${processId}`,
+	});
 
 	const properties = process.parametersSchema?.properties ?? {};
 	if (!properties || Object.keys(properties).length === 0) {

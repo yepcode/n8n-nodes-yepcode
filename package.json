@@ -60,7 +60,5 @@
 	"peerDependencies": {
 		"n8n-workflow": "*"
 	},
-	"dependencies": {
-		"@yepcode/run": "^1.3.0"
-	}
+	"dependencies": {}
 }
