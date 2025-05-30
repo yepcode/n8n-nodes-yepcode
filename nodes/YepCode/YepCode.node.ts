@@ -24,6 +24,7 @@ export class YepCode implements INodeType {
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
 		parameterPane: 'wide',
+		usableAsTool: true,
 		credentials: [
 			{
 				name: 'yepCodeApi',
