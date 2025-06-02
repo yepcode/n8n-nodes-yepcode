@@ -16,7 +16,8 @@ export class YepCode implements INodeType {
 		icon: 'file:yepcode.svg',
 		group: ['output'],
 		version: 1,
-		description: 'Invoke YepCode processes',
+		description:
+			'YepCode lets you run full processes or dynamic scripts using Node.js or Python, with support for any NPM or PyPI dependency. All in a secure, sandboxed environment.',
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["process"]}}',
 		defaults: {
 			name: 'YepCode',

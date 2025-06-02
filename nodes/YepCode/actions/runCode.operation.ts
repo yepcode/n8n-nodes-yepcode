@@ -21,7 +21,6 @@ const properties: INodeProperties[] = [
 			"const isOdd = require('is-odd');\n\nconst number = yepcode.context.parameters?.number || 3;\nconst result = isOdd(number);\nreturn { message: `${number} is ${result ? 'odd' : 'even'}` };",
 		description:
 			"The source's code to execute. It can be a JavaScript or Python code, and it will be executed in the YepCode environment. You can import any NPM or PyPI package and it will be installed automatically (see <a href='https://yepcode.io/docs/processes/source-code'>YepCode docs</a> for more details).",
-		noDataExpression: true,
 	},
 	{
 		displayName: 'Show Advanced Options',
@@ -37,6 +36,10 @@ const properties: INodeProperties[] = [
 		description: "The source's code language. Optional as we'll try to detect it automatically.",
 		options: [
 			{
+				name: 'Auto',
+				value: '',
+			},
+			{
 				name: 'JavaScript',
 				value: 'javascript',
 			},
@@ -45,7 +48,7 @@ const properties: INodeProperties[] = [
 				value: 'python',
 			},
 		],
-		default: 'javascript',
+		default: '',
 		displayOptions: {
 			show: {
 				showAdvancedForRunCode: [true],
@@ -113,6 +116,9 @@ export async function execute(
 			const showAdvanced = this.getNodeParameter('showAdvancedForRunCode', i) as boolean;
 			if (showAdvanced) {
 				options.language = this.getNodeParameter('language', i) as string;
+				if (options.language === '') {
+					delete options.language;
+				}
 				options.removeOnDone = this.getNodeParameter('removeOnDone', i) as boolean;
 				options.initiatedBy = this.getNodeParameter('initiatedBy', i) as string;
 				options.comment = this.getNodeParameter('comment', i) as string;
@@ -134,7 +140,7 @@ export async function execute(
 				},
 			};
 
-			const execution =  await this.helpers.httpRequest(requestOptions);
+			const execution = await this.helpers.httpRequest(requestOptions);
 			const { id, logs, processId, status, returnValue, error, timeline, parameters, comment } =
 				execution;
 			returnData.push({
