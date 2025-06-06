@@ -5,7 +5,7 @@ import {
 	IHttpRequestMethods,
 	IDataObject,
 } from 'n8n-workflow';
-import { stringExtensions } from 'n8n-workflow/dist/Extensions/StringExtensions.js';
+import { base64Decode, base64Encode } from './base64Utils';
 
 export const DEFAULT_API_HOST = 'https://cloud.yepcode.io';
 
@@ -33,9 +33,7 @@ export async function obtainAccessToken(
 			url: `${apiHost}/auth/realms/yepcode/protocol/openid-connect/token`,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
-				authorization: `Basic ${stringExtensions.functions.base64Encode(
-					`${clientId}:${clientSecret}`,
-				)}`,
+				authorization: `Basic ${base64Encode(`${clientId}:${clientSecret}`)}`,
 			},
 			body: 'grant_type=client_credentials',
 		};
@@ -69,7 +67,7 @@ export async function apiRequest(
 ) {
 	const { apiToken, apiHost } = await getYepCodeCredentials.call(this);
 
-	const decodedToken = stringExtensions.functions.base64Decode(apiToken.substring(3));
+	const decodedToken = base64Decode(apiToken.substring(3));
 	const [clientId, clientSecret] = decodedToken.split(':');
 	if (!clientId || !clientSecret) {
 		throw new Error('Invalid apiToken format: ' + apiToken);
