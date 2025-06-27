@@ -59,7 +59,7 @@ const properties: INodeProperties[] = [
 		displayName: 'Remove on Done',
 		name: 'removeOnDone',
 		type: 'boolean',
-		default: true,
+		default: false,
 		displayOptions: {
 			show: {
 				showAdvancedForRunCode: [true],
@@ -110,7 +110,7 @@ export async function execute(
 	for (let i = 0; i < items.length; i++) {
 		try {
 			const options: IDataObject = {
-				removeOnDone: true,
+				removeOnDone: false,
 			};
 
 			const showAdvanced = this.getNodeParameter('showAdvancedForRunCode', i) as boolean;
