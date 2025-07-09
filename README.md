@@ -8,12 +8,11 @@ Easily execute AI-generated code in a secure, scalable environment with full sup
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-[Installation](#installation)  
-[Operations](#operations)  
-[Credentials](#credentials)  
-[Compatibility](#compatibility)  
-[Usage](#usage)  
-[Resources](#resources)  
+[Installation](#installation)
+[Operations](#operations)
+[Credentials](#credentials)
+[Usage](#usage)
+[Resources](#resources)
 
 ## Installation
 
