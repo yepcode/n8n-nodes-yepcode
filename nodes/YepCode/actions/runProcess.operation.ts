@@ -43,6 +43,13 @@ const properties: INodeProperties[] = [
 		description: 'Map input data to the process form',
 	},
 	{
+		displayName: 'Workflow Data',
+		name: 'workflowData',
+		type: 'boolean',
+		default: true,
+		description: 'Whether to include workflow data in the parameters',
+	},
+	{
 		displayName: 'Show Advanced Options',
 		name: 'showAdvanced',
 		type: 'boolean',
@@ -126,6 +133,8 @@ export async function execute(
 
 			const parameters = this.getNodeParameter('parameters.value', i, []) as IDataObject[];
 
+			const workflowData = this.getNodeParameter('workflowData', i) as boolean;
+
 			const showAdvanced = this.getNodeParameter('showAdvanced', i) as boolean;
 			const version = showAdvanced ? (this.getNodeParameter('version', i) as string) : '$CURRENT';
 			const versionOrAlias = version === '$CURRENT' ? '' : version;
@@ -138,6 +147,9 @@ export async function execute(
 			if (initiatedBy) {
 				headers['Yep-Initiated-By'] = initiatedBy;
 			}
+			const parametersToSend = workflowData
+				? { ...this.getWorkflowDataProxy(i), ...parameters }
+				: parameters;
 			let result;
 			if (!synchronous) {
 				result = await apiRequest.call(this, {
@@ -145,7 +157,7 @@ export async function execute(
 					endpoint: `processes/${processId}/execute`,
 					headers,
 					body: {
-						parameters: JSON.stringify(parameters),
+						parameters: JSON.stringify(parametersToSend),
 						tag: versionOrAlias,
 						comment,
 					},
@@ -156,7 +168,7 @@ export async function execute(
 					endpoint: `processes/${processId}/execute-sync`,
 					headers,
 					body: {
-						parameters: JSON.stringify(parameters),
+						parameters: JSON.stringify(parametersToSend),
 						tag: versionOrAlias,
 						comment,
 					},

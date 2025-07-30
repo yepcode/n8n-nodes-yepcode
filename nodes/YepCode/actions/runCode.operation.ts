@@ -23,6 +23,13 @@ const properties: INodeProperties[] = [
 			"The source's code to execute. It can be a JavaScript or Python code, and it will be executed in the YepCode environment. You can import any NPM or PyPI package and it will be installed automatically (see <a href='https://yepcode.io/docs/processes/source-code'>YepCode docs</a> for more details).",
 	},
 	{
+		displayName: 'Workflow Data',
+		name: 'workflowData',
+		type: 'boolean',
+		default: true,
+		description: 'Whether to include workflow data in the parameters',
+	},
+	{
 		displayName: 'Show Advanced Options',
 		name: 'showAdvancedForRunCode',
 		type: 'boolean',
@@ -113,6 +120,8 @@ export async function execute(
 				removeOnDone: false,
 			};
 
+			const workflowData = this.getNodeParameter('workflowData', i) as boolean;
+
 			const showAdvanced = this.getNodeParameter('showAdvancedForRunCode', i) as boolean;
 			if (showAdvanced) {
 				options.language = this.getNodeParameter('language', i) as string;
@@ -130,6 +139,7 @@ export async function execute(
 				method: 'POST',
 				url: `${apiHost}/run`,
 				body: {
+					...(workflowData ? { parameters: JSON.stringify(this.getWorkflowDataProxy(i)) } : {}),
 					code,
 					options,
 				},
