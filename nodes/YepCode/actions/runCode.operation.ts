@@ -171,7 +171,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 	};
 
 	const nodeMode = this.getNodeParameter('mode', 0) as CodeExecutionMode;
-	let addN8nContext = false;
+	let addN8nContext = true;
 	const showAdvanced = this.getNodeParameter('showAdvancedForRunCode', 0) as boolean;
 	if (showAdvanced) {
 		options.language = this.getNodeParameter('language', 0) as string;
