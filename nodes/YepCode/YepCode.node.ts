@@ -65,16 +65,15 @@ export class YepCode implements INodeType {
 	methods = { loadOptions, resourceMapping };
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const items = this.getInputData();
 		let returnData: INodeExecutionData[] = [];
 		const operation = this.getNodeParameter('operation', 0);
 
 		switch (operation) {
 			case 'run_process':
-				returnData = await runProcess.execute.call(this, items);
+				returnData = await runProcess.execute.call(this);
 				break;
 			case 'run_code':
-				returnData = await runCode.execute.call(this, items);
+				returnData = await runCode.execute.call(this);
 				break;
 			default:
 				throw new NodeOperationError(

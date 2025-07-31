@@ -5,10 +5,31 @@ import {
 	updateDisplayOptions,
 	IHttpRequestOptions,
 	IDataObject,
+	CodeExecutionMode,
 } from 'n8n-workflow';
 import { getYepCodeCredentials } from '../transport';
+import { cleanWorkflowData } from '../helpers/utils';
 
 const properties: INodeProperties[] = [
+	{
+		displayName: 'Mode',
+		name: 'mode',
+		type: 'options',
+		noDataExpression: true,
+		options: [
+			{
+				name: 'Run Once for All Items',
+				value: 'runOnceForAllItems',
+				description: 'Run this code only once, no matter how many input items there are',
+			},
+			{
+				name: 'Run Once for Each Item',
+				value: 'runOnceForEachItem',
+				description: 'Run this code as many times as there are input items',
+			},
+		],
+		default: 'runOnceForAllItems',
+	},
 	{
 		displayName: 'Code',
 		name: 'code',
@@ -23,17 +44,24 @@ const properties: INodeProperties[] = [
 			"The source's code to execute. It can be a JavaScript or Python code, and it will be executed in the YepCode environment. You can import any NPM or PyPI package and it will be installed automatically (see <a href='https://yepcode.io/docs/processes/source-code'>YepCode docs</a> for more details).",
 	},
 	{
-		displayName: 'Workflow Data',
-		name: 'workflowData',
-		type: 'boolean',
-		default: true,
-		description: 'Whether to include workflow data in the parameters',
-	},
-	{
 		displayName: 'Show Advanced Options',
 		name: 'showAdvancedForRunCode',
 		type: 'boolean',
 		default: false,
+	},
+	{
+		// eslint-disable-next-line n8n-nodes-base/node-param-display-name-miscased
+		displayName: 'Add n8n Context as Parameters',
+		name: 'addN8nContext',
+		type: 'boolean',
+		default: true,
+		displayOptions: {
+			show: {
+				showAdvancedForRunCode: [true],
+			},
+		},
+		description:
+			'Whether to add the n8n context to the execution. When enabled, your code will receive n8n data via yepcode.context.parameters.n8n containing input items and workflow metadata (environment variables, execution info, etc.).',
 	},
 	{
 		// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
@@ -108,61 +136,113 @@ const displayOptions = {
 
 export const description = updateDisplayOptions(displayOptions, properties);
 
-export async function execute(
+async function executeCode(
 	this: IExecuteFunctions,
-	items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-	const returnData: INodeExecutionData[] = [];
+	params: {
+		apiHost: string;
+		apiToken: string;
+		code: string;
+		options: IDataObject;
+	},
+) {
+	const requestOptions: IHttpRequestOptions = {
+		method: 'POST',
+		url: `${params.apiHost}/run`,
+		body: {
+			code: params.code,
+			options: params.options,
+		},
+		headers: {
+			'Content-Type': 'application/json',
+			accept: 'application/json',
+			'x-api-token': params.apiToken,
+		},
+	};
 
-	for (let i = 0; i < items.length; i++) {
+	return this.helpers.httpRequest(requestOptions);
+}
+
+export async function execute(this: IExecuteFunctions): Promise<INodeExecutionData[]> {
+	const node = this.getNode();
+	let returnData: INodeExecutionData[] = [];
+
+	const options: IDataObject = {
+		removeOnDone: false,
+	};
+
+	const nodeMode = this.getNodeParameter('mode', 0) as CodeExecutionMode;
+	let addN8nContext = false;
+	const showAdvanced = this.getNodeParameter('showAdvancedForRunCode', 0) as boolean;
+	if (showAdvanced) {
+		options.language = this.getNodeParameter('language', 0) as string;
+		if (options.language === '') {
+			delete options.language;
+		}
+		options.removeOnDone = this.getNodeParameter('removeOnDone', 0) as boolean;
+		options.initiatedBy = this.getNodeParameter('initiatedBy', 0) as string;
+		options.comment = this.getNodeParameter('comment', 0) as string;
+		addN8nContext = this.getNodeParameter('addN8nContext', 0) as boolean;
+	}
+
+	const code = this.getNodeParameter('code', 0) as string;
+	const { apiToken, apiHost } = await getYepCodeCredentials.call(this);
+
+	const inputDataItems = this.getInputData();
+	if (nodeMode === 'runOnceForAllItems') {
+		const metadata = cleanWorkflowData(this.getWorkflowDataProxy(0));
+		if (addN8nContext) {
+			options.parameters = { n8n: { items: inputDataItems, metadata } };
+		}
 		try {
-			const options: IDataObject = {
-				removeOnDone: false,
-			};
-
-			const workflowData = this.getNodeParameter('workflowData', i) as boolean;
-
-			const showAdvanced = this.getNodeParameter('showAdvancedForRunCode', i) as boolean;
-			if (showAdvanced) {
-				options.language = this.getNodeParameter('language', i) as string;
-				if (options.language === '') {
-					delete options.language;
-				}
-				options.removeOnDone = this.getNodeParameter('removeOnDone', i) as boolean;
-				options.initiatedBy = this.getNodeParameter('initiatedBy', i) as string;
-				options.comment = this.getNodeParameter('comment', i) as string;
-			}
-
-			const code = this.getNodeParameter('code', i) as string;
-			const { apiToken, apiHost } = await getYepCodeCredentials.call(this);
-			const requestOptions: IHttpRequestOptions = {
-				method: 'POST',
-				url: `${apiHost}/run`,
-				body: {
-					...(workflowData ? { parameters: JSON.stringify(this.getWorkflowDataProxy(i)) } : {}),
-					code,
-					options,
-				},
-				headers: {
-					'Content-Type': 'application/json',
-					accept: 'application/json',
-					'x-api-token': apiToken,
-				},
-			};
-
-			const execution = await this.helpers.httpRequest(requestOptions);
+			const execution = await executeCode.call(this, {
+				apiHost,
+				apiToken,
+				code,
+				options,
+			});
 			const { id, logs, processId, status, returnValue, error, timeline, parameters, comment } =
 				execution;
 			returnData.push({
 				json: { id, logs, processId, status, returnValue, error, timeline, parameters, comment },
 			});
 		} catch (error) {
-			if (this.continueOnFail()) {
-				returnData.push({ json: { message: error.message, error }, pairedItem: { item: i } });
-				continue;
-			} else {
+			if (!this.continueOnFail()) {
+				(error as any).node = node;
 				throw error;
 			}
+			returnData = [{ json: { error: error.message } }];
+		}
+		return returnData;
+	}
+
+	for (let index = 0; index < inputDataItems.length; index++) {
+		const metadata = cleanWorkflowData(this.getWorkflowDataProxy(index));
+		if (addN8nContext) {
+			options.parameters = { n8n: { items: [inputDataItems[index]], metadata } };
+		}
+		try {
+			const execution = await executeCode.call(this, {
+				apiHost,
+				apiToken,
+				code,
+				options,
+			});
+			const { id, logs, processId, status, returnValue, error, timeline, parameters, comment } =
+				execution;
+			returnData.push({
+				json: { id, logs, processId, status, returnValue, error, timeline, parameters, comment },
+			});
+		} catch (error) {
+			if (!this.continueOnFail()) {
+				(error as any).node = node;
+				throw error;
+			}
+			returnData.push({
+				json: { error: error.message },
+				pairedItem: {
+					item: index,
+				},
+			});
 		}
 	}
 
