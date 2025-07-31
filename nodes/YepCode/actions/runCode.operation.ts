@@ -41,7 +41,7 @@ const properties: INodeProperties[] = [
 		default:
 			"// Import any npm package - YepCode will install it automatically\nconst { DateTime } = require(\"luxon\");\n\nconst { n8n } = yepcode.context.parameters;\n\nconst results = [];\nfor (const item of n8n.items) {\n  results.push({\n    ...item.json,\n    processedAt: DateTime.now().toISO(),\n  });\n}\n\n// Access n8n metadata - check all available fields at: https://docs.n8n.io/code/builtin/n8n-metadata/\nconsole.log(\"Environment:\", n8n.metadata);\nconsole.log(\"Resume URL:\", n8n.metadata[\"$execution\"].resumeUrl);\n\nreturn results;",
 		description:
-			"The source's code to execute. It can be a JavaScript or Python code, and it will be executed in the YepCode environment. You can import any NPM or PyPI package and it will be installed automatically (see <a href='https://yepcode.io/docs/processes/source-code'>YepCode docs</a> for more details).",
+			"The source's code to execute. It can be a JavaScript or Python code, and it will be executed in the YepCode environment. You can import any NPM or PyPI package and it will be installed automatically (see <a href='https://yepcode.io/docs/yepcode-coding-rules'>YepCode docs</a> for more details).",
 	},
 	{
 		displayName: 'Show Advanced Options',
