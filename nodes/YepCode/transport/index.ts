@@ -5,7 +5,7 @@ import {
 	IHttpRequestMethods,
 	IDataObject,
 } from 'n8n-workflow';
-import { base64Decode, base64Encode } from './base64Utils';
+import { base64Decode } from './base64Utils';
 
 export const DEFAULT_API_HOST = 'https://cloud.yepcode.io';
 
@@ -21,19 +21,19 @@ export async function getYepCodeCredentials(
 	};
 }
 
-export async function obtainAccessToken(
+async function obtainAccessToken(
 	this: IExecuteFunctions | ILoadOptionsFunctions,
 	apiHost: string,
-	clientId: string,
-	clientSecret: string,
+	teamId: string,
+	apiToken: string,
 ): Promise<string> {
 	try {
 		const options: IHttpRequestOptions = {
 			method: 'POST',
-			url: `${apiHost}/auth/realms/yepcode/protocol/openid-connect/token`,
+			url: `${apiHost}/api/${teamId}/rest/auth/token`,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
-				authorization: `Basic ${base64Encode(`${clientId}:${clientSecret}`)}`,
+				'x-api-token': apiToken,
 			},
 			body: 'grant_type=client_credentials',
 		};
@@ -82,7 +82,7 @@ export async function apiRequest(
 		throw new Error('Invalid clientId format: ' + clientId);
 	}
 
-	const accessToken = await obtainAccessToken.call(this, apiHost, clientId, clientSecret);
+	const accessToken = await obtainAccessToken.call(this, apiHost, teamId, apiToken);
 	const options: IHttpRequestOptions = {
 		method,
 		url: `${apiHost}/api/${teamId}/rest/${endpoint}`,
