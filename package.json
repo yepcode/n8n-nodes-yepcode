@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-yepcode",
-	"version": "1.0.5",
+	"version": "1.1.0",
 	"description": "Custom n8n node module for YepCode",
 	"keywords": [
 		"n8n",
