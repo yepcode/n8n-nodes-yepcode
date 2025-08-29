@@ -44,14 +44,14 @@ export class YepCode implements INodeType {
 						name: 'Run Process',
 						value: 'run_process',
 						description:
-							'Move your complex business logic into yep code processes and trigger them from your workflows using dynamic input parameters it s the most flexible way to connect with your ap is and services using real code with zero dev ops overhead',
+							'Move your complex business logic into YepCode processes and trigger them from your workflows using dynamic input parameters. It is the most flexible way to connect with your app and services using real code with zero dev ops overhead.',
 						action: 'Run process',
 					},
 					{
 						name: 'Run Code',
 						value: 'run_code',
 						description:
-							'A lightweight, flexible way to execute Node.js or Python code on demand — directly from your workflows or AI agents. The run_code tool runs in secure cloud sandboxes with full support for NPM and PyPI dependencies (https://yepcode.io/docs/dependencies), access to secrets, APIs, and databases. Perfect for quick scripts, dynamic logic, or AI-generated code.',
+							'A lightweight, flexible way to execute Node.js or Python code on demand — directly from your workflows or AI agents. The run_code tool runs in secure cloud sandboxes with full support for NPM and PyPI dependencies, access to secrets, APIs, and databases. Perfect for quick scripts, dynamic logic, or AI-generated code. Review the [YepCode Coding Rules](https://yepcode.io/docs/yepcode-coding-rules) to make code compatible with our platform.',
 						action: 'Run code',
 					},
 				],

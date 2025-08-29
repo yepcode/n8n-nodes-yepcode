@@ -28,7 +28,7 @@ Execute a specific YepCode process by selecting it from your YepCode workspace. 
 - **Process Selection**: Choose from your available YepCode processes with searchable dropdown
 - **Parameter Mapping**: Map n8n input data to process parameters using a visual resource mapper
 - **Version Control**: Select specific process versions or use the current version
-- **Execution Modes**: 
+- **Execution Modes**:
   - **Run Once for All Items**: Execute the process once with all input items
   - **Run Once for Each Item**: Execute the process separately for each input item
 - **Synchronous/Asynchronous**: Choose whether to wait for execution completion
@@ -73,6 +73,10 @@ Directly execute custom JavaScript or Python code in YepCode from your n8n workf
 - Data validation
 - Custom business logic
 - Integration with external services
+
+## Coding Rules
+
+Review the [YepCode Coding Rules](https://yepcode.io/docs/yepcode-coding-rules) to make code compatible with our platform.
 
 ## Credentials
 
