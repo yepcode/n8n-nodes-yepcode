@@ -2,7 +2,7 @@
 
 # n8n-nodes-yepcode
 
-This is an n8n community node that enables you to use [YepCode](https://yepcode.io) within your n8n workflows.
+This is an n8n community node that enables you to use [YepCode](https://yepcode.io/l/DqsDT) within your n8n workflows.
 
 Easily execute AI-generated code in a secure, scalable environment with full support for dependencies, secrets, logs, and access to APIs or databases—all on a developer-first platform designed to create any integration or automation without DevOps complexity.
 
@@ -82,7 +82,7 @@ Review the [YepCode Coding Rules](https://yepcode.io/docs/yepcode-coding-rules) 
 
 Authentication is required to use this node. You'll need your YepCode API token, which you can find in your YepCode workspace under `Settings > API credentials`. For YepCode On-Premise, you may also specify a custom API host.
 
-1. Sign up for [YepCode Cloud](https://cloud.yepcode.io).
+1. Sign up for [YepCode Cloud](https://yepcode.io/l/DqsDT).
 2. Get your API token from `Settings > API credentials` in your YepCode workspace.
 3. Create your n8n credential using this token.
 4. (Optional) Enter a custom API host if using YepCode On-Premise.
